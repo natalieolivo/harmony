@@ -1,8 +1,7 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const port = 6000;
-const model = require("./users/models/users.model");
+const port = 9999;
 
 const UsersRouter = require("./users/routes.config");
 
@@ -12,13 +11,16 @@ app.use((request, response, next) => {
     "Access-Control-Allow-Methods",
     "GET,HEAD,PUT,PATCH,POST,DELETE"
   );
-  next();
-  // what is an options request?
-  //   if (request.method === "OPTIONS") {
-  //     return response.send(200); // why am I returning 200 here?
-  //   } else {
-  //     return next(); // what does this do?
-  //   }
+  response.header(
+    "Access-Control-Allow-Headers",
+    "Accept, Authorization, Content-Type, X-Requested-With, Range"
+  );
+
+  if (request.method === "OPTIONS") {
+    return response.send(200); // Do I really need to do this?
+  } else {
+    return next();
+  }
 });
 
 app.use(bodyParser.json());
