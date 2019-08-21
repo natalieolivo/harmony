@@ -3,9 +3,6 @@ const UserModel = require("../models/users.model");
 
 exports.insert = (request, response) => {
   let salt = crypto.randomBytes(16).toString("base64");
-
-  console.log(`request body, ${request.body}`);
-
   let hash = crypto
     .createHmac("sha512", salt)
     .update(request.body.password)
@@ -13,7 +10,6 @@ exports.insert = (request, response) => {
 
   request.body.password = salt = "$" + hash;
   request.body.permissionLevel = 1;
-
   UserModel.createUser(request.body).then(result => {
     response.status(201).send({ id: result._id });
   });

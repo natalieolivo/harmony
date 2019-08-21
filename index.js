@@ -1,8 +1,9 @@
+const config = require("./common/config/env.config.js");
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const port = 9999;
-
+const AuthorizationRouter = require("./auth/routes.config");
+const port = config.port;
 const UsersRouter = require("./users/routes.config");
 
 app.use((request, response, next) => {
@@ -24,7 +25,7 @@ app.use((request, response, next) => {
 });
 
 app.use(bodyParser.json());
-//AuthorizationRouter.routesConfig(app);
+AuthorizationRouter.routesConfig(app);
 UsersRouter.routesConfig(app);
 
 app.listen(port, () => console.log(`listening on port ${port}`));
