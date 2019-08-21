@@ -1,5 +1,5 @@
 const UserModel = require("../../users/models/users.model");
-const crypto = require("crypto");
+const argon2 = require("@phc/argon2");
 
 exports.hasAuthValidFields = (request, response, next) => {
   let errors = [];
@@ -28,27 +28,21 @@ exports.isPasswordAndUserMatch = (request, response, next) => {
     if (!user[0]) {
       response.status(404).send({}); // why do I need an empty object here?
     } else {
-      let passwordFields = user[0].password.split("$");
-      let salt = crypto.randomBytes(16).toString("base64");
-      let hash = crypto
-        .createHmac("sha512", salt)
-        .update(request.body.password)
-        .digest("base64");
-
-      if (hash === passwordFields[1]) {
-        request.body = {
-          userId: user[0]._id,
-          email: user[0].email,
-          permissionLevel: user[0].permissionLevel,
-          provider: "email",
-          name: user[0].firstName + +user[0].lastName
-        };
-        return next();
-      } else {
-        return response
-          .status(404)
-          .send({ errors: ["Invalid email or password"] });
-      }
+      argon2
+        .verify(user[0].password, request.body.password)
+        .then(() => {
+          request.body = {
+            userId: user[0]._id,
+            email: user[0].email,
+            permissionLevel: user[0].permissionLevel,
+            provider: "email",
+            name: user[0].firstName + +user[0].lastName
+          };
+          return next();
+        })
+        .catch(() => {
+          response.status(404).send({ errors: ["Invalid email or password"] });
+        });
     }
   });
 };

@@ -5,7 +5,7 @@ const ADMIN_PERMISSION = 4096; // why this number?
 exports.minimumPermissionLevelRequired = required_permission_level => {
   return (request, response, next) => {
     let user_permission_level = parseInt(request.jwt.permissionLevel);
-    if (user_permission_level && required_permission_level) {
+    if (user_permission_level & required_permission_level) {
       return next();
     } else {
       // FORBIDDEN!!!

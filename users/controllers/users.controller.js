@@ -1,18 +1,22 @@
 const crypto = require("crypto");
+const argon2 = require("@phc/argon2");
 const UserModel = require("../models/users.model");
 
 exports.insert = (request, response) => {
-  let salt = crypto.randomBytes(16).toString("base64");
-  let hash = crypto
-    .createHmac("sha512", salt)
-    .update(request.body.password)
-    .digest("base64");
+  argon2
+    .hash(request.body.password)
+    .then(hash => {
+      console.log(hash);
+      request.body.password = hash;
+      request.body.permissionLevel = 1;
 
-  request.body.password = salt = "$" + hash;
-  request.body.permissionLevel = 1;
-  UserModel.createUser(request.body).then(result => {
-    response.status(201).send({ id: result._id });
-  });
+      UserModel.createUser(request.body).then(result => {
+        response.status(201).send({ id: result._id });
+      });
+    })
+    .catch(error => {
+      console.log(error);
+    });
 };
 
 exports.getById = (request, response) => {
