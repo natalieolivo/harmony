@@ -8,7 +8,6 @@ exports.minimumPermissionLevelRequired = required_permission_level => {
     if (user_permission_level & required_permission_level) {
       return next();
     } else {
-      // FORBIDDEN!!!
       return response.status(403).send();
     }
   };

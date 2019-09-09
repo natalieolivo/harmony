@@ -6,10 +6,10 @@ exports.hasAuthValidFields = (request, response, next) => {
 
   if (request.body) {
     if (!request.body.email) {
-      errors.push("Missing email field");
+      errors.push("Incorrect email field");
     }
     if (!request.body.password) {
-      errors.push("Missing password field");
+      errors.push("Incorrect password field");
     }
     if (errors.length) {
       return response.status(400).send({ errors: errors.join(",") });
