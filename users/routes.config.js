@@ -9,7 +9,10 @@ const FREE = config.permissionLevels.NORMAL_USER;
 
 exports.routesConfig = app => {
   // create a new user
-  app.post("/users", [UsersController.insert]);
+  app.post("/users", [
+    ValidationMiddleware.hasValidUserFields,
+    UsersController.insert
+  ]);
 
   // get a list of users
   app.get("/users", [

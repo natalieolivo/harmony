@@ -1,6 +1,45 @@
 const jwt = require("jsonwebtoken");
 const secret = require("../config/env.config.js").jwt_secret;
 const crypto = require("crypto");
+const UserModel = require("../../users/models/users.model");
+
+exports.hasUserAccount = (request, response, next) => {
+  UserModel.findByEmail(request.body.email).then(user => {
+    if (user[0]) {
+      response
+        .status(400)
+        .send({ errors: ["User already exists. Please login"] });
+    } else {
+      next();
+    }
+  });
+};
+
+exports.hasValidUserFields = (request, response, next) => {
+  let errors = [];
+
+  if (request.body) {
+    if (!request.body.firstName) {
+      errors.push("Incorrect first name");
+    }
+    if (!request.body.lastName) {
+      errors.push("Incorrect last name");
+    }
+    if (!request.body.email) {
+      errors.push("Incorrect email");
+    }
+    if (!request.body.password) {
+      errors.push("Incorrect password");
+    }
+    if (errors.length) {
+      return response.status(400).send({ errors: errors.join(",") });
+    } else {
+      return next();
+    }
+  } else {
+    return response.status(400).send({ errors: "Missing required fields" });
+  }
+};
 
 exports.verifyRefreshBodyField = (request, response, next) => {
   if (request.body && request.body.refresh_token) {

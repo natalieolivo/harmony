@@ -13,7 +13,7 @@ const userSchema = new Schema({
 const User = mongoose.model("Users", userSchema);
 
 //connect to the local db
-mongoose.connect("mongodb://localhost/harmony");
+mongoose.connect("mongodb://localhost/harmony", { useNewUrlParser: true });
 
 userSchema.virtual("id").get(function() {
   return this._id.toHexString();
