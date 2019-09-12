@@ -16,7 +16,11 @@ exports.login = (request, response) => {
     let refresh_token = b.toString("base64");
     response
       .status(201)
-      .send({ accessToken: token, refreshToken: refresh_token });
+      .send({
+        email: request.body.email,
+        accessToken: token,
+        refreshToken: refresh_token
+      });
   } catch (error) {
     response.status(500).send({ errors: error });
   }
