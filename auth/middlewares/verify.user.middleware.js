@@ -12,14 +12,14 @@ exports.hasAuthValidFields = (request, response, next) => {
       errors.push("Incorrect password");
     }
     if (errors.length) {
-      return response.status(400).send({ errors: errors.join(",") });
+      return response.status(400).send({ errors: errors.concat() });
     } else {
       return next();
     }
   } else {
     return response
       .status(400)
-      .send({ errors: "Missing email and password fields" });
+      .send({ errors: ["Missing email and password fields"] });
   }
 };
 
